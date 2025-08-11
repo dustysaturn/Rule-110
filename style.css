@@ -1,0 +1,23 @@
+.content {
+    font-size: 0;
+}
+
+.line {
+    display: flex;
+}
+
+.blackSquare {
+    width: 4px;
+    height: 4px;
+    background-color: black;
+    padding: 0;
+    margin: 0;
+}
+
+.whiteSquare {
+    width: 4px;
+    height: 4px;
+    background-color: white;
+    padding: 0;
+    margin: 0;
+}
