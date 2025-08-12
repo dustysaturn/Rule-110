@@ -5,16 +5,18 @@
   <title>Rule 110</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="" />
-  <!-- <link rel="icon" href="favicon.png"> -->
   <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
 </head>
 <body>
     <div id="controls">
       <button onclick="run()">Run</button>
+      <label for="rule">Rule (1-255):</label>
+      <input type="number" id="rule" name="rule" value="110" min="1" max="255" />
+      <input type="submit" value="Submit" onclick="handleRuleChange()">
     </div>
     <div id="content">
-      <div class="blackSquare"></div>
     </div>
+    
+    <script src="script.js"></script>
 </body>
 </html>

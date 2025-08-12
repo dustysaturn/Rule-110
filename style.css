@@ -1,23 +1,34 @@
-.content {
+body {
+
+}
+
+#controls {
+    background-color: lightcoral;
+}
+
+#content {
+    transform-origin: top left;
+    transition: transform 0.2s ease;
     font-size: 0;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    overflow: hidden;   
 }
 
 .line {
     display: flex;
 }
 
+.blackSquare, .whiteSquare {
+    width: 5px;
+    height: 5px;
+}
+
 .blackSquare {
-    width: 4px;
-    height: 4px;
     background-color: black;
-    padding: 0;
-    margin: 0;
 }
 
 .whiteSquare {
-    width: 4px;
-    height: 4px;
     background-color: white;
-    padding: 0;
-    margin: 0;
 }

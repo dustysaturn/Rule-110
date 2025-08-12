@@ -1,35 +1,74 @@
-const rules = {
+let rules = {
     "111": 0,
     "110": 1,
     "101": 1,
     "100": 0,
-    "011": 1,
+    "011": 1, // switch back to 0
     "010": 1,
     "001": 1,
     "000": 0,
 }
 
-let currentState = [[1],]
-let currentLine = 0;
+let currentLine = []
+let currentLineNumber = 0;
 let isRunning = false;
+let timer = null;
 
-function run(){
-    timer = setInterval(nextGeneration, 10);
+function setRules(rule) {
+    const binaryRule = Number(rule).toString(2).padStart(8, "0");
+    console.log(binaryRule);
+    rules = {
+        "111": Number(binaryRule[0]),
+        "110": Number(binaryRule[1]),
+        "101": Number(binaryRule[2]),
+        "100": Number(binaryRule[3]),
+        "011": Number(binaryRule[4]),
+        "010": Number(binaryRule[5]),
+        "001": Number(binaryRule[6]),
+        "000": Number(binaryRule[7]),
+    }
+    console.log(rules);
+}
 
-    // console.log("run")
-    // isRunning = true;
-    // while(isRunning) {
-    //     nextGeneration();
-        
-    // }
-    if (currentLine > 100) {
-        stop()
+function handleRuleChange() {
+    let rule = document.getElementById("rule").value;
+
+    if (rule == null || parseInt(rule) < 1 || parseInt(rule) > 255) {
+        alert("Submit a number between 1 and 255.")
         return;
     }
+ 
+    setRules(rule);
+    stop();
+    reset();
+}
+
+function run() {
+    if (currentLineNumber > 100 || timer) {
+        stop();
+        return;
+    }
+
+    if (currentLineNumber === 0) {
+        reset();
+    }
+
+    timer = window.setInterval(nextGeneration, 10);
+}
+function reset() {
+    document.getElementById("content").innerHTML = "";
+
+    const maximumBlocks = Math.floor(window.innerWidth / getBlockHeight())
+
+    currentLine = Array(maximumBlocks).fill(0);
+    currentLine[Math.floor(currentLine.length / 2)] = 1;
+    currentLineNumber = 0;
+    isRunning = false;
 }
 
 function stop() {
     clearInterval(timer);
+    timer = null;
 }
 
 function createBlock(alive) {
@@ -45,33 +84,58 @@ function createBlock(alive) {
     return block;
 }
 
-function nextGeneration(){
-    console.log("nextGeneration")
-    const blocks = document.getElementById("content");
-    const line = document.createElement("div");
-    line.className = "line";
-
-    if(currentLine == 0) {
-        line.append(createBlock(1), createBlock(1));
-        currentState.push([1, 1]);
-    }
-    else if(currentLine == 1) {
-        line.append(createBlock(1), createBlock(1), createBlock(1));
-        currentState.push([1, 1, 1]);
-    }
-    else {
-        let nextLine = []
-        const paddedCurrentLine = [0, 0, ...currentState[currentLine], 0];
-        for (let index = 0; index < paddedCurrentLine.length - 2; index++) {
-            const numString = paddedCurrentLine.slice(index, (index + 3)).join("");
-            const outputBlock = rules[numString];
-
-            line.append(createBlock(outputBlock));
-            nextLine.push(outputBlock);
-        }
-        currentState.push(nextLine);
-    }
-
-    currentLine += 1;
-    blocks.append(line)
+function getBlockHeight() {
+    const tempBlock = createBlock(1);
+    document.body.appendChild(tempBlock);
+    const height = tempBlock.offsetHeight;
+    document.body.removeChild(tempBlock);
+    return height;
 }
+
+function setCurrentLine(newLine) {
+    currentLine = newLine;
+}
+
+function getCurrentLine() {
+    return currentLine;
+}
+
+function nextGeneration(){
+    const content = document.getElementById("content");
+
+    if (currentLineNumber > 200 ) {
+        stop()
+    }
+
+    let paddedLine = [0, ...currentLine, 0];
+
+    if (currentLineNumber > 0) {
+        let nextLine = []
+
+        for (let index = 0; index < currentLine.length; index++) {
+            nextLine[index] = rules[paddedLine.slice(index, index + 3).join("")];
+        }
+        
+        currentLine = nextLine;
+    }
+    currentLineNumber += 1;
+    displayLine(currentLine);
+}
+
+function displayLine(line) {
+    const content = document.getElementById("content");
+    const lineDiv = document.createElement("div");
+    lineDiv.className = "line";
+
+    line.slice().forEach(block => lineDiv.appendChild(createBlock(block)));
+
+    content.appendChild(lineDiv);
+
+    content.scrollTop = content.scrollHeight;
+}
+
+addEventListener('keydown', e => {
+    if (e.key == " ") nextGeneration();
+})
+
+// module.exports = {nextGeneration, setCurrentLine, getCurrentLine};
